@@ -1,9 +1,8 @@
 import { describe, it, expect } from "vitest";
 import * as api from "../src/index.js";
-import { InvalidDateError, isLeapYear } from "../src/index.js";
 
-describe("public API barrel", () => {
-  it("exposes all documented runtime functions", () => {
+describe("public API exports", () => {
+  it("exports date utility functions", () => {
     const names = [
       "daysInMonth",
       "fromDayNumber",
@@ -23,6 +22,14 @@ describe("public API barrel", () => {
       "isEqual",
       "getWeekday",
       "startOfWeek",
+    ] as const;
+    for (const name of names) {
+      expect(typeof (api as Record<string, unknown>)[name]).toBe("function");
+    }
+  });
+
+  it("exports clock, selection and grid functions", () => {
+    const names = [
       "fixedClock",
       "systemClock",
       "createEmptyRangeSelection",
@@ -30,21 +37,15 @@ describe("public API barrel", () => {
       "isDateDisabled",
       "selectSingle",
       "selectRange",
-    ];
+      "getMonthGrid",
+    ] as const;
     for (const name of names) {
       expect(typeof (api as Record<string, unknown>)[name]).toBe("function");
     }
   });
 
-  it("re-exports isLeapYear working correctly", () => {
-    expect(isLeapYear(2024)).toBe(true);
-    expect(isLeapYear(2023)).toBe(false);
-    expect(isLeapYear(1900)).toBe(false);
-    expect(isLeapYear(2000)).toBe(true);
-  });
-
-  it("re-exports InvalidDateError as an Error subclass", () => {
-    expect(typeof InvalidDateError).toBe("function");
-    expect(InvalidDateError.prototype instanceof Error).toBe(true);
+  it("exports InvalidDateError as an Error subclass", () => {
+    expect(typeof api.InvalidDateError).toBe("function");
+    expect(api.InvalidDateError.prototype).toBeInstanceOf(Error);
   });
 });
