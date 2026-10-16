@@ -1,6 +1,6 @@
 export type { CalendarDate, Clock, Weekday } from "./types.js";
 
-export { InvalidDateError } from "./errors.js";
+export { InvalidDateError, UnsupportedLocaleError } from "./errors.js";
 
 export {
   daysInMonth,
@@ -61,3 +61,21 @@ export type {
   SearchDirection,
 } from "./keyboard-types.js";
 export type { KeyboardTarget } from "./keyboard-target.js";
+
+export type { CalendarLocale, LocaleCode } from "./locale-types.js";
+
+export { pl } from "./locales/pl.js";
+export { en } from "./locales/en.js";
+
+export {
+  availableLocales,
+  getLocale,
+  isSupportedLocale,
+} from "./locale-registry.js";
+
+export {
+  formatFullDate,
+  formatMonthHeading,
+  getMonthNames,
+  getWeekdayNames,
+} from "./locale-format.js";

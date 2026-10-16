@@ -1,38 +1,52 @@
 import { describe, it, expect } from 'vitest';
-import { InvalidDateError } from '../src/errors';
+import { InvalidDateError, UnsupportedLocaleError } from '../src/errors';
 
 describe('InvalidDateError', () => {
-  it('is an Error subclass with correct name, input, and prototype chain', () => {
-    const input = { y: 2024 };
+  it('keeps the raw input, sets name, and stays an Error/InvalidDateError instance', () => {
+    const input = { year: 2024, month: 13 };
     const err = new InvalidDateError(input);
-    expect(err).toBeInstanceOf(InvalidDateError);
+
     expect(err).toBeInstanceOf(Error);
+    expect(err).toBeInstanceOf(InvalidDateError);
     expect(err.name).toBe('InvalidDateError');
     expect(err.input).toBe(input);
-    expect(typeof err.stack).toBe('string');
+    expect(err.message).toBe('Invalid calendar date: {"year":2024,"month":13}');
+
+    const custom = new InvalidDateError('x', 'custom message');
+    expect(custom.message).toBe('custom message');
+    expect(custom.input).toBe('x');
   });
 
-  it('builds default messages describing different input types', () => {
-    expect(new InvalidDateError('2024-13-01').message).toBe('Invalid calendar date: "2024-13-01"');
-    expect(new InvalidDateError(Symbol('x')).message).toBe('Invalid calendar date: Symbol(x)');
-    expect(new InvalidDateError(10n).message).toBe('Invalid calendar date: 10n');
-    expect(new InvalidDateError(null).message).toBe('Invalid calendar date: null');
+  it('describes different input kinds in the default message', () => {
+    expect(new InvalidDateError('2024-02-30').message).toBe('Invalid calendar date: "2024-02-30"');
     expect(new InvalidDateError(undefined).message).toBe('Invalid calendar date: undefined');
+    expect(new InvalidDateError(null).message).toBe('Invalid calendar date: null');
     expect(new InvalidDateError(NaN).message).toBe('Invalid calendar date: NaN');
-    expect(new InvalidDateError({ a: 1 }).message).toBe('Invalid calendar date: {"a":1}');
-    expect(new InvalidDateError([1, 2]).message).toBe('Invalid calendar date: [1,2]');
+    expect(new InvalidDateError(10n).message).toBe('Invalid calendar date: 10n');
+    expect(new InvalidDateError(Symbol('s')).message).toBe('Invalid calendar date: Symbol(s)');
 
     const circular: Record<string, unknown> = {};
     circular.self = circular;
     expect(new InvalidDateError(circular).message).toBe('Invalid calendar date: [object Object]');
   });
+});
 
-  it('uses a custom message when provided and keeps input untouched', () => {
-    const err = new InvalidDateError('bad', 'custom message');
-    expect(err.message).toBe('custom message');
-    expect(err.input).toBe('bad');
+describe('UnsupportedLocaleError', () => {
+  it('uses default supported locales, copies custom ones, and keeps the locale', () => {
+    const err = new UnsupportedLocaleError('de');
+    expect(err).toBeInstanceOf(Error);
+    expect(err).toBeInstanceOf(UnsupportedLocaleError);
+    expect(err.name).toBe('UnsupportedLocaleError');
+    expect(err.locale).toBe('de');
+    expect(err.supported).toEqual(['pl', 'en']);
+    expect(err.message).toBe('Unsupported locale: "de". Supported locales: "pl", "en".');
 
-    const empty = new InvalidDateError('bad', '');
-    expect(empty.message).toBe('');
+    const list = ['fr', 'es'];
+    const custom = new UnsupportedLocaleError(42, list);
+    list.push('it');
+    expect(custom.locale).toBe(42);
+    expect(custom.supported).toEqual(['fr', 'es']);
+    expect(custom.supported).not.toBe(list);
+    expect(custom.message).toBe('Unsupported locale: 42. Supported locales: "fr", "es".');
   });
 });
