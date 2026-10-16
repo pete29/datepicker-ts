@@ -46,3 +46,10 @@ export { isDateDisabled } from "./constraints.js";
 export { selectSingle } from "./single-selection.js";
 
 export { selectRange } from "./range-selection.js";
+
+export { getMonthGrid } from "./month-grid.js";
+export type {
+  MonthGridDay,
+  MonthGridOptions,
+  MonthGridWeek,
+} from "./month-grid-types.js";
