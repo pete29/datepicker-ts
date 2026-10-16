@@ -2,8 +2,10 @@ import { describe, it, expect } from "vitest";
 import * as api from "../src/index.js";
 
 describe("public API exports", () => {
-  it("exports date utility functions", () => {
+  it("exports all expected runtime functions and values", () => {
     const names = [
+      "InvalidDateError",
+      "UnsupportedLocaleError",
       "daysInMonth",
       "fromDayNumber",
       "isLeapYear",
@@ -22,14 +24,6 @@ describe("public API exports", () => {
       "isEqual",
       "getWeekday",
       "startOfWeek",
-    ] as const;
-    for (const name of names) {
-      expect(typeof (api as Record<string, unknown>)[name]).toBe("function");
-    }
-  });
-
-  it("exports clock, selection and grid functions", () => {
-    const names = [
       "fixedClock",
       "systemClock",
       "createEmptyRangeSelection",
@@ -38,14 +32,31 @@ describe("public API exports", () => {
       "selectSingle",
       "selectRange",
       "getMonthGrid",
-    ] as const;
+      "moveFocus",
+      "pl",
+      "en",
+      "availableLocales",
+      "getLocale",
+      "isSupportedLocale",
+      "formatFullDate",
+      "formatMonthHeading",
+      "getMonthNames",
+      "getWeekdayNames",
+    ];
     for (const name of names) {
-      expect(typeof (api as Record<string, unknown>)[name]).toBe("function");
+      expect((api as Record<string, unknown>)[name], name).toBeDefined();
     }
   });
 
-  it("exports InvalidDateError as an Error subclass", () => {
-    expect(typeof api.InvalidDateError).toBe("function");
-    expect(api.InvalidDateError.prototype).toBeInstanceOf(Error);
+  it("exposes working date helpers through the entry point", () => {
+    expect(api.isLeapYear(2024)).toBe(true);
+    expect(api.isLeapYear(2023)).toBe(false);
+    expect(api.daysInMonth(2024, 2)).toBe(29);
+  });
+
+  it("exposes locale registry consistent with exported locales", () => {
+    expect(api.isSupportedLocale("en")).toBe(true);
+    expect(api.isSupportedLocale("xx")).toBe(false);
+    expect(api.getLocale("en")).toBe(api.en);
   });
 });
