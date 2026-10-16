@@ -28,3 +28,21 @@ export { getWeekday, startOfWeek } from "./weekday.js";
 
 export { fixedClock, systemClock } from "./clock.js";
 export type { SystemClockOptions } from "./clock.js";
+
+export type {
+  DateConstraints,
+  DisabledDates,
+  RangeSelectionState,
+  SelectionMode,
+  SingleSelectionState,
+} from "./selection-types.js";
+export {
+  createEmptyRangeSelection,
+  createEmptySingleSelection,
+} from "./selection-types.js";
+
+export { isDateDisabled } from "./constraints.js";
+
+export { selectSingle } from "./single-selection.js";
+
+export { selectRange } from "./range-selection.js";
