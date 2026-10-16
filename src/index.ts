@@ -53,3 +53,11 @@ export type {
   MonthGridOptions,
   MonthGridWeek,
 } from "./month-grid-types.js";
+
+export { moveFocus } from "./keyboard-navigation.js";
+export type {
+  FocusMoveFunction,
+  NavigationKey,
+  SearchDirection,
+} from "./keyboard-types.js";
+export type { KeyboardTarget } from "./keyboard-target.js";
