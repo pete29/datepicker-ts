@@ -14,6 +14,8 @@
   },
   "include": [
     "src",
-    "tests"
+    "tests",
+    "demo",
+    "vite.config.ts"
   ]
 }
