@@ -54,6 +54,9 @@ export type {
   MonthGridWeek,
 } from "./month-grid-types.js";
 
+export { renderMonthGrid } from "./dom-render.js";
+export type { RenderMonthGridOptions } from "./dom-render-types.js";
+
 export { moveFocus } from "./keyboard-navigation.js";
 export type {
   FocusMoveFunction,

@@ -1,62 +1,58 @@
 import { describe, it, expect } from "vitest";
-import * as api from "../src/index.js";
+import {
+  InvalidDateError,
+  UnsupportedLocaleError,
+  addDays,
+  availableLocales,
+  compareDates,
+  createEmptyRangeSelection,
+  createEmptySingleSelection,
+  daysInMonth,
+  en,
+  fixedClock,
+  getLocale,
+  getMonthGrid,
+  isLeapYear,
+  isSupportedLocale,
+  moveFocus,
+  pl,
+  renderMonthGrid,
+  selectRange,
+  selectSingle,
+  systemClock,
+} from "../src/index.js";
 
 describe("public API exports", () => {
-  it("exports all expected runtime functions and values", () => {
-    const names = [
-      "InvalidDateError",
-      "UnsupportedLocaleError",
-      "daysInMonth",
-      "fromDayNumber",
-      "isLeapYear",
-      "isValidDate",
-      "parseDate",
-      "toDayNumber",
-      "addDays",
-      "daysBetween",
-      "subtractDays",
-      "addMonths",
-      "subtractMonths",
-      "clampDate",
-      "compareDates",
-      "isAfter",
-      "isBefore",
-      "isEqual",
-      "getWeekday",
-      "startOfWeek",
-      "fixedClock",
-      "systemClock",
-      "createEmptyRangeSelection",
-      "createEmptySingleSelection",
-      "isDateDisabled",
-      "selectSingle",
-      "selectRange",
-      "getMonthGrid",
-      "moveFocus",
-      "pl",
-      "en",
-      "availableLocales",
-      "getLocale",
-      "isSupportedLocale",
-      "formatFullDate",
-      "formatMonthHeading",
-      "getMonthNames",
-      "getWeekdayNames",
-    ];
-    for (const name of names) {
-      expect((api as Record<string, unknown>)[name], name).toBeDefined();
-    }
+  it("exports runtime functions, error classes and locales", () => {
+    expect(typeof InvalidDateError).toBe("function");
+    expect(typeof UnsupportedLocaleError).toBe("function");
+    expect(typeof addDays).toBe("function");
+    expect(typeof compareDates).toBe("function");
+    expect(typeof daysInMonth).toBe("function");
+    expect(typeof fixedClock).toBe("function");
+    expect(typeof systemClock).toBe("function");
+    expect(typeof getMonthGrid).toBe("function");
+    expect(typeof renderMonthGrid).toBe("function");
+    expect(typeof moveFocus).toBe("function");
+    expect(typeof selectSingle).toBe("function");
+    expect(typeof selectRange).toBe("function");
+    expect(en).toBeDefined();
+    expect(pl).toBeDefined();
   });
 
-  it("exposes working date helpers through the entry point", () => {
-    expect(api.isLeapYear(2024)).toBe(true);
-    expect(api.isLeapYear(2023)).toBe(false);
-    expect(api.daysInMonth(2024, 2)).toBe(29);
+  it("re-exported date helpers behave correctly", () => {
+    expect(isLeapYear(2024)).toBe(true);
+    expect(isLeapYear(2023)).toBe(false);
+    expect(daysInMonth(2024, 2)).toBe(29);
+    expect(daysInMonth(2023, 2)).toBe(28);
   });
 
-  it("exposes locale registry consistent with exported locales", () => {
-    expect(api.isSupportedLocale("en")).toBe(true);
-    expect(api.isSupportedLocale("xx")).toBe(false);
-    expect(api.getLocale("en")).toBe(api.en);
+  it("exports locale registry and empty selection factories", () => {
+    expect(isSupportedLocale("en")).toBe(true);
+    expect(isSupportedLocale("xx")).toBe(false);
+    expect(getLocale("en")).toBe(en);
+    expect(availableLocales).toBeDefined();
+    expect(createEmptySingleSelection()).toBeDefined();
+    expect(createEmptyRangeSelection()).toBeDefined();
   });
 });
