@@ -12,6 +12,10 @@ const MAX_YEAR = 9999;
 
 const MONTH_LENGTHS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] as const;
 
+/**
+ * Internal numeric breakdown of a validated "YYYY-MM-DD" string.
+ * Not exported: the public API is string-only (CalendarDate).
+ */
 interface DateParts {
   readonly year: number;
   readonly month: number;
@@ -73,35 +77,23 @@ function validateParts(
 }
 
 /**
- * Extracts and validates the parts of a calendar date. Accepts either a strict
- * "YYYY-MM-DD" string or an object with numeric year, month and day fields.
- * Returns null when the input is malformed or not a real calendar date.
+ * Extracts and validates the parts of a calendar date given as a strict
+ * "YYYY-MM-DD" string. Returns null when the input is not a string, is
+ * malformed, or is not a real calendar date.
  */
 function tryParseParts(input: unknown): DateParts | null {
-  if (typeof input === "string") {
-    const match = DATE_PATTERN.exec(input);
-    if (match === null) {
-      return null;
-    }
-    return validateParts(Number(match[1]), Number(match[2]), Number(match[3]));
+  if (typeof input !== "string") {
+    return null;
   }
-  if (typeof input === "object" && input !== null) {
-    const candidate = input as Record<string, unknown>;
-    const { year, month, day } = candidate;
-    if (
-      typeof year !== "number" ||
-      typeof month !== "number" ||
-      typeof day !== "number"
-    ) {
-      return null;
-    }
-    return validateParts(year, month, day);
+  const match = DATE_PATTERN.exec(input);
+  if (match === null) {
+    return null;
   }
-  return null;
+  return validateParts(Number(match[1]), Number(match[2]), Number(match[3]));
 }
 
 /**
- * True when the input is a strictly formatted, real calendar date.
+ * True when the input is a strictly formatted, real calendar date string.
  */
 export function isValidDate(input: unknown): input is CalendarDate {
   return tryParseParts(input) !== null;
@@ -142,7 +134,7 @@ export function toDayNumber(date: CalendarDate): number {
 }
 
 /**
- * Converts a number of days since 1970-01-01 back to a CalendarDate.
+ * Converts a number of days since 1970-01-01 back to a CalendarDate string.
  * Throws InvalidDateError when the value is not an integer or the result
  * falls outside the years 0000-9999.
  */
@@ -179,5 +171,6 @@ export function fromDayNumber(dayNumber: number): CalendarDate {
       `Day number out of supported range: ${String(dayNumber)}`,
     );
   }
-  return { year, month, day } as unknown as CalendarDate;
+  const text = `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return text as unknown as CalendarDate;
 }
